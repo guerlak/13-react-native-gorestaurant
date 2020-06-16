@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView } from 'react-native';
+import { Image, ScrollView, Alert } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
@@ -33,6 +33,7 @@ interface Food {
   name: string;
   description: string;
   price: number;
+  category: number;
   thumbnail_url: string;
   formattedPrice: string;
 }
@@ -51,15 +52,31 @@ const Dashboard: React.FC = () => {
   >();
   const [searchValue, setSearchValue] = useState('');
 
-  const navigation = useNavigation();
+  const { navigate } = useNavigation();
 
   async function handleNavigate(id: number): Promise<void> {
     // Navigate do ProductDetails page
+
+    navigate('FoodDetails', { id });
   }
 
   useEffect(() => {
     async function loadFoods(): Promise<void> {
       // Load Foods from API
+
+      try {
+        const res = await api.get('foods');
+        if (selectedCategory) {
+          const selectedFoods = res.data.filter(
+            f => f.category === selectedCategory,
+          );
+          setFoods(selectedFoods);
+        } else {
+          setFoods(res.data);
+        }
+      } catch (err) {
+        Alert.alert('Erro ao acessar os dados');
+      }
     }
 
     loadFoods();
@@ -68,6 +85,12 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     async function loadCategories(): Promise<void> {
       // Load categories from API
+      try {
+        const res = await api.get('categories');
+        setCategories(res.data);
+      } catch (err) {
+        Alert.alert('Erro ao acessar os dados.');
+      }
     }
 
     loadCategories();
@@ -75,6 +98,11 @@ const Dashboard: React.FC = () => {
 
   function handleSelectCategory(id: number): void {
     // Select / deselect category
+    if (selectedCategory === id) {
+      setSelectedCategory(undefined);
+    } else {
+      setSelectedCategory(id);
+    }
   }
 
   return (
@@ -85,7 +113,7 @@ const Dashboard: React.FC = () => {
           name="log-out"
           size={24}
           color="#FFB84D"
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigate('Home')}
         />
       </Header>
       <FilterContainer>
