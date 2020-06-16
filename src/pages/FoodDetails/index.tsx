@@ -130,15 +130,14 @@ const FoodDetails: React.FC = () => {
 
   function handleDecrementFood(): void {
     // Decrement food quantity
-    if (foodQuantity > 0) {
+    if (foodQuantity > 1) {
       const quantity = foodQuantity - 1;
       setFoodQuantity(quantity);
     }
   }
 
-  const toggleFavorite = useCallback(() => {
+  const toggleFavorite = useCallback(async () => {
     // Toggle if food is favorite or not
-
     if (!isFavorite) {
       setIsFavorite(true);
     } else {
@@ -154,7 +153,9 @@ const FoodDetails: React.FC = () => {
 
     if (extras.length) {
       totalExtraPrice = extras.reduce((total, extra) => {
-        if (extra.quantity > 0) return (total += extra.quantity * extra.value);
+        if (extra.quantity > 0) {
+          return (total += extra.quantity * extra.value);
+        }
         return total;
       }, 0);
     }

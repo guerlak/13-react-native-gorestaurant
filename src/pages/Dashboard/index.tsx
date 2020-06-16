@@ -63,19 +63,28 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     async function loadFoods(): Promise<void> {
       // Load Foods from API
-
       try {
         const res = await api.get('foods');
+        const foodsFromApi = res.data;
+
         if (selectedCategory) {
-          const selectedFoods = res.data.filter(
-            f => f.category === selectedCategory,
+          const selectedFoods = foodsFromApi.filter(
+            (f: Food) => f.category === selectedCategory,
           );
-          setFoods(selectedFoods);
+          setFoods(
+            selectedFoods.filter((f: Food) =>
+              f.name.toLowerCase().includes(searchValue),
+            ),
+          );
         } else {
-          setFoods(res.data);
+          setFoods(
+            foodsFromApi.filter((f: Food) =>
+              f.name.toLowerCase().includes(searchValue),
+            ),
+          );
         }
       } catch (err) {
-        Alert.alert('Erro ao acessar os dados');
+        Alert.alert(`Erro ao acessar os dados ${err.message}`);
       }
     }
 
