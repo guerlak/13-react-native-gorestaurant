@@ -86,7 +86,7 @@ const FoodDetails: React.FC = () => {
         setFood(foodSelected);
         setExtras(foodSelected.extras);
       } catch (err) {
-        Alert.alert(err.message);
+        // Alert.alert(err.message);
       }
     }
 
@@ -165,6 +165,13 @@ const FoodDetails: React.FC = () => {
 
   async function handleFinishOrder(): Promise<void> {
     // Finish the order and save on the API
+
+    try {
+      // const res = await api.post('orders', food);
+      Alert.alert('Pedido realizado.');
+    } catch (err) {
+      Alert.alert(err.message);
+    }
   }
 
   // Calculate the correct icon name

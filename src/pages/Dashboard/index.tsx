@@ -56,7 +56,6 @@ const Dashboard: React.FC = () => {
 
   async function handleNavigate(id: number): Promise<void> {
     // Navigate do ProductDetails page
-
     navigate('FoodDetails', { id });
   }
 
@@ -67,19 +66,23 @@ const Dashboard: React.FC = () => {
         const res = await api.get('foods');
         const foodsFromApi = res.data;
 
+        foodsFromApi.forEach((element: Food) => {
+          element.formattedPrice = formatValue(element.price);
+        });
+
         if (selectedCategory) {
           const selectedFoods = foodsFromApi.filter(
             (f: Food) => f.category === selectedCategory,
           );
           setFoods(
             selectedFoods.filter((f: Food) =>
-              f.name.toLowerCase().includes(searchValue),
+              f.name.toLowerCase().includes(searchValue.toLowerCase()),
             ),
           );
         } else {
           setFoods(
             foodsFromApi.filter((f: Food) =>
-              f.name.toLowerCase().includes(searchValue),
+              f.name.toLowerCase().includes(searchValue.toLowerCase()),
             ),
           );
         }
