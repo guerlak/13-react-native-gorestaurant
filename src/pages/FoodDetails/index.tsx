@@ -84,9 +84,12 @@ const FoodDetails: React.FC = () => {
         const foodSelected = objs.filter((f: Food) => f.id === id)[0];
         foodSelected.formattedPrice = formatValue(foodSelected.price);
         setFood(foodSelected);
+        foodSelected.extras.forEach((element: Extra) => {
+          element.quantity = 0;
+        });
         setExtras(foodSelected.extras);
       } catch (err) {
-        // Alert.alert(err.message);
+        Alert.alert(err.message);
       }
     }
 
