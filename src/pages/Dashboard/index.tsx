@@ -61,34 +61,19 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     async function loadFoods(): Promise<void> {
-      // Load Foods from API
-      try {
-        const res = await api.get('foods');
-        const foodsFromApi = res.data;
+      const { data } = await api.get<Food[]>('foods', {
+        params: {
+          name_like: searchValue,
+          category_like: selectedCategory,
+        },
+      });
 
-        foodsFromApi.forEach((element: Food) => {
-          element.formattedPrice = formatValue(element.price);
-        });
-
-        if (selectedCategory) {
-          const selectedFoods = foodsFromApi.filter(
-            (f: Food) => f.category === selectedCategory,
-          );
-          setFoods(
-            selectedFoods.filter((f: Food) =>
-              f.name.toLowerCase().includes(searchValue.toLowerCase()),
-            ),
-          );
-        } else {
-          setFoods(
-            foodsFromApi.filter((f: Food) =>
-              f.name.toLowerCase().includes(searchValue.toLowerCase()),
-            ),
-          );
-        }
-      } catch (err) {
-        Alert.alert(`Erro ao acessar os dados ${err.message}`);
-      }
+      setFoods(
+        data.map(food => ({
+          ...food,
+          formattedPrice: formatValue(food.price),
+        })),
+      );
     }
 
     loadFoods();
